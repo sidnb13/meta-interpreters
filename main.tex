@@ -1,0 +1,92 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{authblk}
+\usepackage{appendix}
+
+\title{CS 2051: Computability of Meta-Interpreters}
+
+\author[1]{Govind Gnanakumar}
+\author[1]{Sidharth Baskaran}
+\author[1]{Shikhar Ahuja}
+\affil[1]{College of Computing, Georgia Institute of Technology}
+
+\date{April 9, 2023}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+\section{Background}
+% This section should develop the basic definitions and
+% preliminary results required for the statement and proof of
+% your main result, including examples that help the reader to
+% develop intuition for the concepts presented. Start from scratch, remember your audience is other 2051 students.
+
+Before we can understand how the principles of computability apply to meta-interpreters, we must first specify what we mean by a meta-interpreter, because even in the broader context of programming language theory, this is something that is rather ill-defined. Most generally, a meta-interpreter is an interpreter for a language that is written in itself (as the vast majority of programming languages are today). For example, interpreting a lambda application may be implemented using function application. But for the purposes of this paper, we shall differentiate between the three concepts commonly identified with meta-interpretation: self-recognizers, self-interpreters, and self-evaluators. A self-interpreter takes a source term representation in some plain format (such as a string of characters) and returns a representation of the corresponding normalized term; a self-recognizer takes a typed representation and returns an plain form; a self-evaluator takes a typed representation and returns a reduced typed representation. Suppose in our language the expression $e$ evaluates to $v$;
+the typed representation of a term $t$ is denoted as $typed\_rep(t)$;
+the plain representation (e.g. string) of a term $t$ is denoted as $plain\_rep(t)$. Then we have (note that those things are not types but input-output correspondences) $self-recognizer: typed\_rep(f) -> f$ and
+$plain-interpreter: plain\_rep(<f, x>) -> plain\_rep(f(x))$.
+
+TODO:
+% Define computability
+We shall research the foundational tenets and proofs of computability theory—from the halting problem to the various types of recursion.
+
+% Define Godel encoding
+We shall consider one of the most common methods of dealing with uniform types in computability proofs—Godel encodings.
+
+% Defining formal grammars seems unnecessary
+% Define recursively enumerable languages, and their subsets
+% We shall define recursively enumerable languages, and their subsets
+
+% Defining combinators seems unnecessary
+% Define STLC, SKI combinators, Y Combinator, etc
+% We shall define STLC, SKI combinators, Y combinator, etc
+
+% Define the specifications of System F-omega (refer to appendix), and its position in the broader context of the Lambda Cube.
+We shall investigate the Lambda Cube, and the meaning of its edges and vertices. That is, we shall discuss the semantics and reduction rules of the untyped lambda calculus, STLC, System F, and System Fω.
+
+\section{Computability of Total Functional Languages}
+It's widely believed that it's impossible to build a self-interpreter for a total functional language as a corollary of the halting problem. Because if a self-interpreter could be defined for a total (strongly normalizing) language, then that would mean one could pass in any term, and the compiler would reject or accept it, and thus, from a description of an arbitrary computer program and an input, know whether the program will finish running, or continue to run forever. An existence of such an interpreter violates the halting problem.
+TODO: Properly explain the above with examples and maybe a proof by contradiction. EXPLAIN THE HALTING PROBLEM.
+
+From the above, it would seem as if it was impossible to type check anything at all—but that is not the case, for we see type checkers in the real world all the time. Type checking a strict subset of all programs is possible—all this means is that there's no guarantee that a program that fails to type check actually fails to halt. It may halt, but it may also not halt—a type checker is incapable of checking every program with absolute certainty. TODO: ELABORATE WITH EXAMPLES; EXPLAIN TOTAL FUNCTIONAL LANGUAGES
+
+EXPLAIN UNIVERSAL FUNCTIONS
+
+EXPLAIN THE NORMALIZATION BARRIER
+
+TODO: Existing understanding of how/why its impossible to build a self-interpreter for a total functional language, and a look into Brown and Palsberg's paper: https://web.cs.ucla.edu/~palsberg/paper/popl16-full.pdf. May also be helpful: http://lambda-the-ultimate.org/node/3076
+
+
+
+\section{Disproving Brown and Palsberg}
+% Our disproof of Brown and Palsberg's belief that they defined a self-interpreter for F-omega 
+We'll approach this problem from the computability standpoint, and attempt a proof by contradiction.
+
+
+\section{Generalizations and Future Possiblities}
+Although we've shown that it's impossible to create a self-interpreter for F-omega, this is only the beginning. There is still the more pressing question as to why that is the case. Is F-omega itself semantically ill-defined, and if we specify a type checker as a constant function primitive, does that mean it is impossible to create a typed representation from an untyped one? What needs to be added to F-omega to make it self-interpretable?
+
+But if we continue our foray away from type theory, and into the world of computability, we find that there's a great deal more we can extract from these observations. If we generalize these results to even just the simply typed lambda calculus, we'll begin to reach the boundaries of the fundamental problems of computing—of Tarski's undefinability theorem. If it's impossible to implement a type checker as a constant function primitive, or it leads to contradictions then that answers our question. But if we are able to somehow implement a type checker as a constant primitive, then that would unlock an entire world of possibilities with respect to expressibility. Because, as Tarski observes, "No sufficiently powerful language is strongly-semantically-self-representational," so by somehow embedding this primitive into the language, we'd be able to \textit{increase} its expressibility, which has its own problems—for if this addition would strictly increase the power of the language, it would imply that we need another language more powerful to interpret this more powerful language, and so on and so forth. It's turtles all the way up. It would fundamentally change how we would define the expressibility of a language.
+
+
+\section{References}
+% Here you should acknowledge people whose help you are thankful
+% for (and why), and any sources such as books and websites that
+% you used when studying for the project.
+\begin{enumerate}
+    \item Types and Programming Languages, Benjamin Pierce
+    \item Brown and Palsberg, https://web.cs.ucla.edu/~palsberg/paper/popl16-full.pdf
+    \item https://mathworld.wolfram.com/GoedelNumber.html
+    \item Lambda Cube https://crypto.stanford.edu/~blynn/lambda/pts.html
+    \item https://en.wikipedia.org/wiki/Tarski%27s_undefinability_theorem
+    \item Shuo Ding and Qirun Zhang
+\end{enumerate}
+
+\appendixpage
+LAMBDA CUBE + formal grammar of F-omega
+\end{document}
