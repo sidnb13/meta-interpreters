@@ -1,0 +1,238 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{amsthm}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\lstset{
+  basicstyle=\ttfamily,
+  mathescape,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\usepackage[numbers]{natbib}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{conjecture}{Conjecture}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Computability of Self-Interpreters for System F_\omega
+}
+
+\author{\IEEEauthorblockN{Govind Gnanakumar}
+\IEEEauthorblockA{\textit{College of Computing} \\
+\textit{Georgia Institute of Technology}\\
+Atlanta, GA \\
+govind.gnanakumar@gatech.edu}
+\and
+\IEEEauthorblockN{Sidharth Baskaran}
+\IEEEauthorblockA{\textit{College of Computing} \\
+\textit{Georgia Institute of Technology}\\
+Atlanta, GA \\
+sidharth.baskaran@gatech.edu}
+\and
+\IEEEauthorblockN{Shikhar Ahuja}
+\IEEEauthorblockA{\textit{College of Computing} \\
+\textit{Georgia Institute of Technology}\\
+Atlanta, GA \\
+sahuja63@gatech.edu}}
+
+\maketitle
+
+\begin{abstract}
+It is widely believed that self-interpreters cannot be defined for strongly normalizing $\lambda$-calculus based languages on account of a theorem in computability theory that says that a total universal function for the total computable functions is
+impossible. Brown and Palsberg wrote a widely popularized paper claiming to have "broken through" this normalization barrier for $F_\omega$. This possibly due to a misdefinition of "self-interpretation"—nevertheless, we investigate and disprove their claim borrowing an approach from computability theory.
+\end{abstract}
+
+\begin{IEEEkeywords}
+computability theory, self-interpreters, lambda calculus, F-omega, programming language theory
+\end{IEEEkeywords}
+
+\section{Introduction}
+Before we can understand how the principles of computability--which outlines problems that are computationally tractable--apply to meta-interpreters, we must first specify what we mean by a meta-interpreter, because even in the broader context of programming language theory, this is something that is rather ill-defined. Most generally, a meta-interpreter is an interpreter for a language that is written in itself (as the vast majority of programming languages are today). For example, interpreting a lambda application may be implemented using function application. But for the purposes of this paper, we shall differentiate between the three concepts commonly identified with meta-interpretation: self-recognizers, self-interpreters, and self-evaluators\cite{pierce2002types}.
+\begin{enumerate}
+    \item A self-interpreter takes a source term representation in some plain format (such as a string of characters) and returns a representation of the corresponding normalized term, which is something that can be represented solely by core language features.
+    \item A self-recognizer takes a typed representation and returns an plain form.
+    \item A self-evaluator takes a typed representation and returns a reduced typed representation.
+\end{enumerate}
+
+% Suppose in our language the expression $e$ evaluates to $v$;
+% the typed representation of a term $t$ is denoted as \verb|typed_rep(t)|;
+% the plain representation (e.g. string) of a term $t$ is denoted as \verb|plain_rep(t)|. Then we have (note that those things are not types but input-output correspondences) \verb|self-recognizer: typed_rep(f) -\rangle  f| and
+% \verb|plain-interpreter: plain_rep(\langle f, x\rangle ) -\rangle  plain_rep(f(x))|.
+
+% WHERE DOES ALL OF ABOVE PARA FIT IN MAYBE PUT IN OWN SECTION
+
+% Define Godel encoding
+% Defining formal grammars seems unnecessary
+% Define recursively enumerable languages, and their subsets
+% We shall define recursively enumerable languages, and their subsets
+% Defining combinators seems unnecessary
+% Define STLC, SKI combinators, Y Combinator, etc
+% We shall define STLC, SKI combinators, Y combinator, etc
+% Define the specifications of System F-omega (refer to appendix), and its position in the broader context of the Lambda Cube.
+
+\section{Background}
+
+\subsection{Lambda Calculus}
+
+A $\lambda$ calculus is defined as the smallest, or most fundamental programming language. It operates solely on the concepts of variable substitution and function definitions. We a present a brief introduction to this language as a means of expressing computable functions in a mathematical language for a theoretical approach\cite{rojas2015tutorial}. An \textit{expression} can be either a name (i.e. variable or identifier), function, or application. Functions operate on names and expressions, and applications are effectively compositions of expressions. We summarize this as:
+
+\begin{lstlisting}
+    <expression>  := <name>|<function>|<application> 
+    <function> := $\lambda$ <name>.<expression>
+    <application>  := <expression> <expression>
+\end{lstlisting}
+
+We could define the identity function as
+\begin{equation*}
+    \lambda x.x
+\end{equation*}
+Further, we perform application from left-to-right, that is for a set of expressions $\{E_i\}$:
+\begin{equation*}
+    E_1E_2\cdots E_n\equiv ((E_1E_2)E_3)\cdots E_n
+\end{equation*}
+Combining these concepts, we can apply a function to an expression as the following:
+\begin{equation*}
+    (\lambda x.x)y
+\end{equation*}
+Here, we substitute the value of $y$ into the function definition:
+\begin{equation*}
+    (\lambda x.x)y=[y/x]x=y
+\end{equation*}
+We only provide a brief overview here, but $\lambda$-calculus can perform all the basic things a programming language can, including arithmetic and logical operations, and is Turing complete.
+
+\subsection{The Lambda Cube}
+We shall investigate the Lambda Cube, and the meaning of its edges and vertices. That is, we shall discuss the semantics and reduction rules of the STLC, System F, and System $F_\omega$.\cite{lambdavending}
+
+The Lambda Cube is a diagram that represents three different type systems based on the lambda calculus: simply typed lambda calculus (STLC), System F, and System $F_\omega$. Each edge and vertex of the cube represents a different feature or extension of the lambda calculus.
+
+The STLC is the simplest type system in the Lambda Cube, and it has only one type constructor, namely the arrow type ($\to$). The arrow type allows us to form functions by specifying the types of the input and output values. For example, the type of a function that takes an integer and returns a boolean is written as $\text{int} \to \text{bool}$. The reduction rule for STLC is beta-reduction, which allows us to apply a function to an argument and substitute the argument in place of the function parameter.
+
+System F, also known as the polymorphic lambda calculus, extends the STLC with universal quantification. This means that we can write functions that are polymorphic over types, meaning they can operate on values of different types. In System F, we introduce a new type constructor, called the universal type ($\forall$), which allows us to quantify over types. For example, we can define a function that takes a list of any type and returns its length by using the universal type as follows: $\text{List}\ T \to \text{Int}$, where $T$ is a type variable that is universally quantified. The reduction rule for System F is also beta-reduction, but it is more complex than in STLC due to the presence of type variables.
+
+System $F_\omega$ extends System F with type constructors for dependent types and higher-kinded types. Dependent types allow types to depend on values, while higher-kinded types allow types to take other types as parameters. In System $F_\omega$, we introduce two new type constructors: the dependent type ($\rightarrow$) and the kind ($*$). The dependent type allows us to define functions whose output types depend on their input types, while the kind allows us to define types that take other types as parameters. The reduction rule for System $F_\omega$ is also more complex than in System F due to the presence of dependent types and higher-kinded types\cite{pierce2002types}
+
+\subsection{Encodings}
+We shall consider one of the most common methods of dealing with uniform types in computability proofs—the Godel encoding.
+The idea is that a finite list of natural numbers $\{a_0,a_1,\ldots,a_n\}$ can be encoded to single unique natural number. In other words it is an injective mapping $G:\mathbb{N}^n\to \mathbb{N}$ such that
+\begin{equation*}
+    G(\{a_i\})=p_0^{a_0}\cdot p_1^{a_1}\cdot \cdots \cdot p_n^{a_n}    
+\end{equation*}
+Since we create a prime factorization, which are unique, the function is bijective. This means we can represent $n$-nary functions
+as 1-ary functions since we can look at $f(\{a_i\})\implies f(p_0^{a_0}\cdot p_1^{a_1}\cdot \cdots \cdot p_n^{a_n})$.
+
+\subsection{Halting Problem}
+
+The halting problem is a foundational theorem in computability\cite{brilliant}. The fundamental question is that given an input to a program, whether or not it will terminate or run indefinitely.
+Alan Turing proved that a Turing machine cannot determine correctly if all possible combinations of programs and inputs terminate, thus the problem is called \textit{undecideable}. Formally, we can define a decision problem $H$ as the set of all possible program and input combinations where
+\begin{equation*}
+    H=\left\{\langle p,x \rangle\mid \text{program $p$ halts on input $x$}\right\}
+\end{equation*}
+A Turing machine can solve the decision problem $H$ if given an input $\langle p,x \rangle$ it terminates and $\langle p,x \rangle\in H$. The only condition for termination here, to be more specific, is that the $p$ does not loop forever. This can be proved by contradiction, as we will show next.
+
+\begin{proof}
+    Suppose a Turing machine $A$ decides $H$ (that is, it can determine correctly if all possible states in $H$ terminate or not). Further consider a Turing machine $B$ that works as follows: it takes an input $\langle p\rangle$, and runs $A$ given the input $\langle p,\langle p\rangle \rangle$, where $\langle p\rangle$ is a way to format $p$ for input. It halts if $A$ does not halt, does not halt if $A$ halts. Let us consider the case when $B$ receives the input $\langle B,\langle B\rangle \rangle$. That is, it runs $A$ on this input. We consider the cases where $A$ terminates or rejects.
+    \begin{enumerate}
+        \item If $A$ accepts, then $B$ given input $\langle B\rangle $ must halt. But by the definition of $B$ if $A$ halts we run infinitely so $B$ does not halt.
+        \item If $A$ rejects, then $B$ given input $\langle B\rangle $ must not halt. But by the definition of $B$ if $A$ does not halt we must halt.
+    \end{enumerate}
+    Both cases lead to a contradiction of our assumption such an $A$ exists, so it cannot, and no Turing machine decides $H$.
+\end{proof}
+
+\section{Computability of Total Functional Languages}
+It may be useful to define what computable, total, partial, and universal functions are before we define total functional languages, and strongly normalizing languages.
+
+A computable function is the formalized analogue of the intuitive notion of algorithms, i.e. given an input of the function domain it can return the corresponding output. A function $f: N^k \to N$ is only computable if given any $k$-tuple of natural numbers (any type encoded as a number), there is a procedure producing $f(x)$.
+
+A total function is a function defined for all inputs of the input type, for some $f: S \to T$, $\forall x \in S$, $f(x)$, and a partial function is one that maps only a proper subset of $S$ to $T$.
+
+A universal function is a computable function capable of calculating any other computable function; the universal Turing machine theorem guarantees the existence of this is as a basic result about the Gödel numberings of the set of computable functions.
+
+\begin{theorem}
+    A partial computable function$u$ of two variables exists such that for every computable functions $f$ of one variable, an $e$ exists such that $f(x) \simeq u(e, x)$ for all $x$. Thus, for every $x$, either $f(x)$ and $u(e, x)$ are both defined and equal, or are both undefined.
+\end{theorem}
+
+The theorem thus demonstrates that, defining $\phi_e(x)$ as $u(e, x)$, the sequence $\phi_1, \phi_2, \phi_3, ...$ is an enumeration of the partial computable functions. The function $u$ in the statement of the theorem is what we call a universal function.
+
+A total functional language can be simply defined as one that restricts the range of acceptable programs to those that are \textit{provably terminating}, guaranteed by restricting programs to reduced (e.g., Walther recursion) or strongly normalizing forms (every object is rewritten to an irreducible form——think of simple arithmetic expressions, which always converge to a single form), and every function is total.
+
+It's worth noting that the untyped lambda calculus doesn't satisfy the strong normalization property, while various systems of typed calculus (STLC, System F, and the calculus of constructions) do, implying that there are computable functions that cannot be defined in these languages.
+
+One such function is a self-interpreter, as a corollary of the halting problem. Because if a self-interpreter could be defined for a total (strongly normalizing) language, then that would mean one could pass in any term, and the compiler would reject or accept it, and thus, from a description of an arbitrary computer program and an input, know whether the program will finish running, or continue to run forever. An existence of such an interpreter violates the halting problem.
+
+From the above, it would seem as if it was impossible to type check anything at all—but that is not the case, for we see type checkers in the real world all the time. Type checking a strict subset of all programs is possible—all this means is that there's no guarantee that a program that fails to type check actually fails to halt. It may halt, but it may also not halt—a type checker is incapable of checking every program with absolute certainty.
+
+\section{Disproving Brown and Palsberg}
+
+We enumerate our disproof of Brown and Palsberg's\cite{brown2016breaking} belief that they defined a self-interpreter for F-omega. We'll approach this problem from the computability standpoint, and attempt a proof by contradiction.
+
+\begin{definition}
+A (countable) set $F$ of total functions from $N$ to $N$ is self-interpretable if and only if there exists a (possibly repetitive) list of all functions in $F$, $f_0, f_1, f_2,  ...$, such that there exists $g \in F$ satisfying $\forall i \in N$, $g(2^i3^x) = f_i(x)$.
+Note: The list doesn’t need to be computably enumerable.
+\end{definition}
+
+\begin{theorem}
+The set C of all computable total functions from $N$ to $N$ is not self-interpretable.
+\end{theorem}
+
+\begin{proof}
+Suppose there is a list of all functions in $C$ ($c_0  c_1  c_2  ...$) such that there exists $g \in C$ satisfying  $\forall i \in N$, $g(2^i3^x)=c_i(x)$. Let $p(x) = g(2^x3^x) + 1$. Clearly, $p(x)$ is still a computable total function (because $p(x)$ consists of a computable total function, $g \in C$), so $p = c_j$ for some $j \in N$.
+
+Now consider $p(j)$:\\
+$p(j) = g(2^j3^j) + 1 = c_j(j) + 1 = p(j) + 1$.
+
+This is a contradiction, so $C$ is not self-interpretable.
+\end{proof}
+
+We shall adopt a similar approach for finding a contradiction in selt-interpretable $F_\omega$.
+
+\begin{conjecture}
+The set L of all total functions from $N$ to $N$ computable by $F_\omega$ is not self-interpretable.
+\end{conjecture}
+
+\begin{proof}
+    Suppose there is a list of all total functions in $L$ ($l_0, l_1, l_2, ...$) such that there exists $g \in L$ satisfying $\forall i \in N, g(\langle i, x\rangle ) = l_i(x)$. Let $p(x) = g(\langle i, x\rangle ) + 1$. Clearly, $p(x)$ is still in $L$, so $p = l_j$ for some $j \in N$. Now consider $p(j)$:\\
+    $p(j)=g(\langle j, j\rangle )+1=l_j(j) + 1 = p(j) + 1$.
+
+    This is a contradiction, so $L$ is not self-interpretable.
+\end{proof}
+
+\section{Generalizations and Future Possiblities}
+
+Although we've shown that it's impossible to create a self-interpreter for $F_\omega$, this is only the beginning. There is still the more pressing question as to why that is the case. Is $F_\omega$ itself semantically ill-defined, and if we specify a type checker as a constant function primitive, does that mean it is impossible to create a typed representation from an untyped one? What needs to be added to $F_omega$ to make it self-interpretable?
+
+But if we continue our foray away from type theory, and into the world of computability, we find that there's a great deal more we can extract from these observations. If we generalize these results to even just the simply typed lambda calculus, we'll begin to reach the boundaries of the fundamental problems of computing—of Tarski's indefinability theorem. If it's impossible to implement a type checker as a constant function primitive, or it leads to contradictions then that answers our question. But if we are able to somehow implement a type checker as a constant primitive, then that would unlock an entire world of possibilities with respect to expressibility. Because, as Tarski observes, "No sufficiently powerful language is strongly-semantically-self-representational," so by somehow embedding this primitive into the language, we'd be able to \textit{increase} its expressibility, which has its own problems—for if this addition would strictly increase the power of the language, it would imply that we need another language more powerful to interpret this more powerful language, and so on and so forth. It's turtles all the way up. It would fundamentally change how we would define the expressibility of a language.
+
+\section*{Acknowledgments}
+
+We extend our thanks to Shuo Ding and Prof. Qirun Zhang, and the Programming Languages Group at Georgia Tech, for their invaluable advice and guidance.
+
+\bibliographystyle{IEEEtranN}
+\bibliography{references}
+
+% \begin{thebibliography}{00}
+% \bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+% \bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
+% \bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
+% \bibitem{b4} K. Elissa, ``Title of paper if known,'' unpublished.
+% \bibitem{b5} R. Nicole, ``Title of paper with only first word capitalized,'' J. Name Stand. Abbrev., in press.
+% \bibitem{b6} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ``Electron spectroscopy studies on magneto-optical media and plastic substrate interface,'' IEEE Transl. J. Magn. Japan, vol. 2, pp. 740--741, August 1987 [Digests 9th Annual Conf. Magnetics Japan, p. 301, 1982].
+% \bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
+% \end{thebibliography}
+% \vspace{12pt}
+% \color{red}
+% IEEE conference templates contain guidance text for composing and formatting conference papers. Please ensure that all template text is removed from your conference paper prior to submission to the conference. Failure to remove the template text from your paper may result in your paper not being published.
+
+\end{document}
